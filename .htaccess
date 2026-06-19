@@ -1,0 +1,64 @@
+# 🔒 Disable PHP execution completely
+<FilesMatch "\.(php|php5|php7|php8|phtml)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# 🔐 Disable directory browsing
+Options -Indexes
+
+# 🚫 Prevent access to hidden files and sensitive config files
+<FilesMatch "^\.">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "(^#.*#|\.bak|\.config|\.sql|\.ini|\.log|\.sh|\.inc|\.swp|~)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# 🛡️ Block common hacking patterns in URLs
+RewriteEngine On
+RewriteCond %{QUERY_STRING} (\.\.\/|\.\.\\) [NC,OR]
+RewriteCond %{QUERY_STRING} (select|union|insert|drop|eval|base64_|wget|curl|cmd=|exec) [NC]
+RewriteRule ^.* - [F,L]
+
+# ✅ Serve default Apache error messages (no custom malware redirects)
+ErrorDocument 400 "Bad Request"
+ErrorDocument 401 "Unauthorized"
+ErrorDocument 403 "Access Forbidden"
+ErrorDocument 404 "Page Not Found"
+ErrorDocument 500 "Internal Server Error"
+
+# 💡 Prevent hotlinking of images (optional)
+# RewriteCond %{HTTP_REFERER} !^$
+# RewriteCond %{HTTP_REFERER} !^https?://(www\.)?yourdomain\.com [NC]
+# RewriteRule \.(jpg|jpeg|png|gif|webp)$ - [F,NC,L]
+
+# 📛 Disable server signature (security hardening)
+ServerSignature Off
+
+deny from 87.236.176.0/24
+deny from 87.236.176.1
+deny from 87.236.176.2/31
+deny from 87.236.176.4/30
+deny from 87.236.176.8/29
+deny from 87.236.176.16/28
+deny from 87.236.176.32/27
+deny from 87.236.176.64/26
+deny from 87.236.176.128/26
+deny from 87.236.176.192/27
+deny from 87.236.176.224/28
+deny from 87.236.176.240/29
+deny from 87.236.176.248/31
+deny from 87.236.176.250
+
+php_flag engine off
+
+# php -- BEGIN cPanel-generated handler, do not edit
+# Set the “ea-php81” package as the default “PHP” programming language.
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php81___lsphp .php .php8 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit
